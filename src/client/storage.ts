@@ -3,7 +3,11 @@
 export * as libsql from "@libsql/client";
 export { InMemoryStorage } from "./in-memory.js";
 
-import type { MessageType, StorageThreadType } from "@mastra/core";
+import type {
+  MessageType,
+  StorageThreadType,
+  WorkflowRuns,
+} from "@mastra/core";
 import type {
   EvalRow,
   StorageColumn,
@@ -36,6 +40,16 @@ import {
 import { UseApi } from "./types.js";
 
 export class ConvexStorage extends MastraStorage {
+  getWorkflowRuns(args?: {
+    namespace?: string;
+    workflowName?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    limit?: number;
+    offset?: number;
+  }): Promise<WorkflowRuns> {
+    throw new Error("Method not implemented.");
+  }
   ctx: Ctx<"action" | "mutation" | "query"> | undefined;
   api: UseApi<Mounts>["storage"];
   constructor(component: UseApi<Mounts>, options?: { name?: string }) {
@@ -243,16 +257,13 @@ export class ConvexStorage extends MastraStorage {
     selectBy,
   }: StorageGetMessagesArg): Promise<T[]> {
     const ctx = this.getApi("query");
-    const messages: SerializedMessage[] = await ctx.runQuery(
-      this.api.messages.getMessagesPage,
-      {
-        threadId,
-        selectBy,
-        // memoryConfig: threadConfig,
-      }
-    );
+    const messages = await ctx.runQuery(this.api.messages.getMessagesPage, {
+      threadId,
+      selectBy,
+      // memoryConfig: threadConfig,
+    });
     return messages.map((message) =>
-      mapSerializedToMastra(TABLE_MESSAGES, message)
+      mapSerializedToMastra(TABLE_MESSAGES, message as SerializedMessage)
     ) as T[];
   }
 

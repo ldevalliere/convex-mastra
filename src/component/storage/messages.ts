@@ -179,7 +179,10 @@ function messageToSerializedMastra(
   message: Doc<"messages">
 ): SerializedMessage {
   const { threadOrder: _, _id, _creationTime, ...serialized } = message;
-  return serialized;
+  return {
+    ...serialized,
+    resourceId: message.id, // Add the required resourceId property
+  };
 }
 
 const DEFAULT_MESSAGES_LIMIT = 40; // What pg & upstash do too.
@@ -278,9 +281,10 @@ export const saveMessages = mutation({
     console.debug(`Saving messages ${args.messages.length}`);
     const messagesByThreadId: Record<string, SerializedMessage[]> = {};
     for (const message of args.messages) {
-      messagesByThreadId[message.threadId] = [
-        ...(messagesByThreadId[message.threadId] ?? []),
-        message,
+      const typedMessage = message as SerializedMessage;
+      messagesByThreadId[typedMessage.threadId] = [
+        ...(messagesByThreadId[typedMessage.threadId] ?? []),
+        typedMessage,
       ];
     }
     for (const threadId in messagesByThreadId) {

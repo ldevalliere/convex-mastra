@@ -208,6 +208,7 @@ export function mapMastraToSerialized<T extends TABLE_NAMES>(
       const serialized: SerializedMessage = {
         id: row.id,
         threadId: row.threadId,
+        resourceId: row.resourceId,
         content: serializeContent(row.content),
         role: row.role,
         type: row.type,
@@ -367,6 +368,7 @@ export function mapSerializedToMastra<T extends TABLE_NAMES>(
         role: serialized.role,
         type: serialized.type,
         createdAt: new Date(serialized.createdAt),
+        resourceId: serialized.resourceId,
       };
       return messageRow as MastraRowTypeMap[T];
     }

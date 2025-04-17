@@ -1,4 +1,8 @@
-import type { MessageType, StorageThreadType } from "@mastra/core";
+import type {
+  MessageType,
+  StorageThreadType,
+  WorkflowRuns,
+} from "@mastra/core";
 import type {
   EvalRow,
   StorageColumn,
@@ -111,6 +115,16 @@ export type StorageApi = {
 };
 
 export class ConvexStorage extends MastraStorage {
+  getWorkflowRuns(args?: {
+    namespace?: string;
+    workflowName?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    limit?: number;
+    offset?: number;
+  }): Promise<WorkflowRuns> {
+    throw new Error("Method not implemented.");
+  }
   client: ConvexHttpClient;
   api: StorageApi;
   constructor(

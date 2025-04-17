@@ -1,4 +1,8 @@
-import type { MessageType, StorageThreadType } from "@mastra/core";
+import type {
+  MessageType,
+  StorageThreadType,
+  WorkflowRuns,
+} from "@mastra/core";
 import type {
   EvalRow,
   StorageColumn,
@@ -22,6 +26,16 @@ type Row = Record<string, any>;
  * It is used for testing and development purposes.
  */
 export class InMemoryStorage extends MastraStorage {
+  getWorkflowRuns(args?: {
+    namespace?: string;
+    workflowName?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    limit?: number;
+    offset?: number;
+  }): Promise<WorkflowRuns> {
+    throw new Error("Method not implemented.");
+  }
   private tables: Record<TABLE_NAMES, Row[]> = {
     [TABLE_WORKFLOW_SNAPSHOT]: [],
     [TABLE_EVALS]: [],
